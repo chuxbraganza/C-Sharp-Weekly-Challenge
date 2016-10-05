@@ -143,9 +143,53 @@ namespace CodeLou.CSharp.Week5.Challenge.Controllers
         {
             // Hint: This method will be similar to the update method.
             // Hint: for now set the Position and Department to Id 1
-            
+
             // TODO: Create employee from form submission, redirect to list
-            return View();
+            SqlRepository repository = new SqlRepository(_LocalFileConnectionString);
+            string sql = String.Format($@"INSERT INTO Employee (
+            PositionId,
+            DepartmentId,
+            FirstName,
+            LastName,
+            Email,
+            Phone,
+            Extension,
+            HireDate,
+            StartTime,
+            ActiveEmployee) 
+
+            VALUES (
+            1, 
+            1,
+            '{employee.FirstName}',
+            '{employee.LastName}',
+            '{employee.EMail}',
+            '{employee.Phone}',
+            '{employee.Extension}',
+            '{employee.HireDate.ToString()}',            
+            ");
+
+            if (employee.TerminationDate.HasValue)
+            {
+                sql += $", '{employee.TerminationDate.Value.ToString()}'";
+            }
+
+            sql += $"'{employee.StartTime}'";
+
+            if (employee.ActiveEmployee)
+            {
+                sql += $",1)";
+            }
+            else
+            {
+                sql += $",0)";
+            }
+
+            repository.CreateEmployee(sql);
+
+           return RedirectToAction("Index");
+            
+            //return View();
         }        
     }    
 }
