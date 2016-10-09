@@ -55,7 +55,7 @@ namespace CodeLou.CSharp.Week5.Challenge.Controllers
         // GET: Detail
         public ActionResult Details(int id)
         {
-            // TODO: Create View For Details and return employee model to view
+            
             SqlRepository repository = new SqlRepository(_LocalFileConnectionString);
             string sql = String.Format("SELECT * FROM Employee WHERE Id = {0}", id);
 
@@ -126,20 +126,41 @@ namespace CodeLou.CSharp.Week5.Challenge.Controllers
         // GET: Delete
         public ActionResult Delete(int id)
         {
-            // TODO: Create View For Delete and return employee model to view
-            return View();
+            
+            SqlRepository repository = new SqlRepository(_LocalFileConnectionString);
+            string sql = String.Format("SELECT * FROM Employee WHERE Id = {0}", id);
+
+            Employee employee = repository.GetOneEmployee(sql);
+            ViewBag.EmployeeFullName = String.Format("{0} {1}", employee.FirstName, employee.LastName);
+            return View(employee);
+
+            
         }
         // POST: Delete
         [HttpPost]
         public ActionResult Delete(Employee employee)
         {
-            // TODO: Delete employee from the database and redirect to list
-            return View();
+           
+            try
+            {
+                SqlRepository repository = new SqlRepository(_LocalFileConnectionString);
+                string sql = String.Format($"DELETE FROM Employee WHERE Id={employee.Id}");
+
+                repository.DeleteEmplyee(sql);
+                return RedirectToAction("Index");
+
+            }
+            catch(Exception ex)
+            {
+                ViewBag.ErrorText = ex.ToString();
+                return View("Error");
+            }
+            
         }
         // GET: Create
         public ActionResult Create()
         {
-            return View();
+            return View(new Employee { HireDate = DateTime.Now, StartTime = "9:00 AM", ActiveEmployee = true });
         }
         // POST: Create
         [HttpPost]
@@ -147,10 +168,11 @@ namespace CodeLou.CSharp.Week5.Challenge.Controllers
         {
             // Hint: This method will be similar to the update method.
             // Hint: for now set the Position and Department to Id 1
-
-            // TODO: Create employee from form submission, redirect to list
-            SqlRepository repository = new SqlRepository(_LocalFileConnectionString);
-            string sql = String.Format($@"INSERT INTO Employee (
+            try
+            {
+                
+                SqlRepository repository = new SqlRepository(_LocalFileConnectionString);
+                string sql = String.Format($@"INSERT INTO Employee(
             PositionId,
             DepartmentId,
             FirstName,
@@ -160,9 +182,11 @@ namespace CodeLou.CSharp.Week5.Challenge.Controllers
             Extension,
             HireDate,
             StartTime,
-            ActiveEmployee) 
+            ActiveEmployee,
+            TerminationDate
+            ) 
 
-            VALUES (
+            VALUES(
             1, 
             1,
             '{employee.FirstName}',
@@ -170,29 +194,40 @@ namespace CodeLou.CSharp.Week5.Challenge.Controllers
             '{employee.EMail}',
             '{employee.Phone}',
             '{employee.Extension}',
-            '{employee.HireDate.ToString()}',            
+            '{employee.HireDate.ToString()}',
+            '{employee.StartTime}',            
             ");
 
-            if (employee.TerminationDate.HasValue)
+                if (employee.ActiveEmployee)
+                {
+                    sql += $"1";
+                }
+                else
+                {
+                    sql += $"0";
+                }
+
+                if (employee.TerminationDate.HasValue)
+                {
+                    sql += $", '{employee.TerminationDate.Value.ToString()}'";
+                }
+                else
+                {
+                    sql += $", null";
+
+                }
+
+                sql += $")";
+
+                repository.CreateEmployee(sql);
+
+                return RedirectToAction("Index");
+            }catch(Exception ex)
             {
-                sql += $", '{employee.TerminationDate.Value.ToString()}'";
+
+                ViewBag.ErrorText = ex.ToString();
+                return View("Error");
             }
-
-            sql += $"'{employee.StartTime}'";
-
-            if (employee.ActiveEmployee)
-            {
-                sql += $",1)";
-            }
-            else
-            {
-                sql += $",0)";
-            }
-
-            repository.CreateEmployee(sql);
-
-           return RedirectToAction("Index");
-            
             //return View();
         }        
     }    
