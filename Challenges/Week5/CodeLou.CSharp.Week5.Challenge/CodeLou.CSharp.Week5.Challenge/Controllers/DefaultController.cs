@@ -41,11 +41,11 @@ namespace CodeLou.CSharp.Week5.Challenge.Controllers
             //string sql = "SELECT * FROM Employee E INNER JOIN Department D ON D.Id = E.DepartmentId INNER JOIN Position P ON P.Id = E.PositionId";
             #endregion
 
-            // TODO: How to we order the data by a column, enable sorting?
-            ViewBag.EnableSorting = false;
+            ViewBag.EnableSorting = true;
             if (!String.IsNullOrEmpty(OrderBy))
             {
                 // sql += ??
+                sql += string.Format(" ORDER BY {0} {1}", OrderBy, OrderDirection);
                 // TODO: Bonus - How do we persist the OrderDirection?
             }
 
