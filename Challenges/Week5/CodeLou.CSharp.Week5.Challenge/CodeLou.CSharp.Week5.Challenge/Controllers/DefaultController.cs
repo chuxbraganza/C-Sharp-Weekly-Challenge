@@ -76,7 +76,6 @@ namespace CodeLou.CSharp.Week5.Challenge.Controllers
             // TODO: Bonus - Saving an employee failed. What happens next?
             
             SqlRepository repository = new SqlRepository(_LocalFileConnectionString);
-
             // Note: there is a way better way to do this using parameterized sql, but since we're practicing sql we're going it this way
             // Also, since we're writing SQL Code as a string in C# pay attension to quotes that you would use in an actual query.
             // luckily Sql uses single quotes for strings, so no need to escape them here.
