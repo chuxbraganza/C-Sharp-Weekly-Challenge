@@ -56,7 +56,11 @@ namespace CodeLou.CSharp.Week5.Challenge.Controllers
         public ActionResult Details(int id)
         {
             // TODO: Create View For Details and return employee model to view
-            return View();
+            SqlRepository repository = new SqlRepository(_LocalFileConnectionString);
+            string sql = String.Format("SELECT * FROM Employee WHERE Id = {0}", id);
+
+            Employee employee = repository.GetOneEmployee(sql);
+            return View(employee);
         }
         // GET: Edit
         public ActionResult Edit(int id)
