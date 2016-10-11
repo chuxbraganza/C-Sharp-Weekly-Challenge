@@ -24,23 +24,31 @@ namespace LinqChallenge
 
             NewQuestion();
             Console.WriteLine("What are the airports in Louisville?");
-            var louisvilleAirports = Airports.Where(a => a.City == "Louisville");
-
+            foreach (var result in Airports.Where(a => a.City == "Louisville"))
+                Console.WriteLine($"{result.AirportName}({result.City}, {result.Country}) [{result.IATA}/{result.ICAO}]");
+            
             NewQuestion();
 
             Console.WriteLine("What is the Latitude/Longitude of KSDF?");
+            foreach (var resultLatitudeLongitudeKSDF in Airports.Where(a => a.ICAO == "KSDF"))
+                Console.WriteLine($"lat: {Math.Round(resultLatitudeLongitudeKSDF.Latitude,2)} long: {Math.Round(resultLatitudeLongitudeKSDF.Longitude, 2)}");
 
             NewQuestion();
-
+            
             Console.WriteLine("How many routes originate in in louisville? ");
+            Console.WriteLine( Routes.Where(r => r.SourceAirport == "SDF").Count());
 
             NewQuestion();
 
             Console.WriteLine("How many routes terminate in Louisville?");
+            Console.WriteLine(Routes.Where(r => r.DestinationAirport == "SDF").Count());
 
             NewQuestion();
 
             Console.WriteLine("Give me a list of Countries and how many airports in each country, as long as they have more than 100 airports?");
+            foreach (var resultCountriesAirportsMoreThan100 in Airports.GroupBy(a => a.Country).Where(c => c.Count() > 100))
+                Console.WriteLine($"{resultCountriesAirportsMoreThan100.Key}: {resultCountriesAirportsMoreThan100.Count()}");
+
 
             // If you get this far, this is probably good enough skills for being able to do your class project. 
             // But if you want to challenge yourself, keep on! 
@@ -69,6 +77,7 @@ namespace LinqChallenge
             // I could not come up with a MEANINGFUL GroupJoin question to ask that had displayable data with Airline data.
 
         }
+
 
         private static void NewQuestion()
         {
