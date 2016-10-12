@@ -58,7 +58,18 @@ namespace LinqChallenge
             Console.WriteLine("Of the flights that leave Louisville, where do they go and which airline? I want sorted Airport Names, Airline");
             // hint 1:  Join once 
             // hint 2:  then join again 
-            
+            var resultAirlineNames = Routes.Where(r => r.SourceAirport == "SDF")
+                                      .Join(Airlines, r => r.AirlineId, a => a.AirlineId, 
+                                      (a, r) => new { AirportID = a.DestinationAirportId, AirlineName = r.AirlineName });
+
+            var resultAirportNameAndAirlineNames = resultAirlineNames
+                                      .Join(Airports, r => r.AirportID, a => a.AirportId,
+                                      (a, r) => new { AirportName = r.AirportName, Airline = a.AirlineName })
+                                      .OrderBy(a => a.AirportName);                                    
+
+            foreach (var item in resultAirportNameAndAirlineNames)
+                Console.WriteLine($"{item.AirportName} {item.Airline}");
+
             NewQuestion();
 
             Console.WriteLine("Which 5 airports are have the most flights taking off? (and how many flights)");
